@@ -1,0 +1,15 @@
+body {
+    font-family: Arial;
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+nav a {
+    margin: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+h1 {
+    color: #333;
+}

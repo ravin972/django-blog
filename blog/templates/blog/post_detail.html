@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+{% block title %}{{ post.title }} - My Blog{% endblock %}
+{% block content %}
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">{{ post.title }}</h2>
+      <p class="card-text">{{ post.content|linebreaks }}</p>
+      <p class="text-muted">By {{ post.author }} | {{ post.created_at|date:"M d, Y" }}</p>
+    </div>
+    <div class="card-footer">
+      <a href="{% url 'edit_post' post.slug %}" class="btn btn-warning btn-sm">Edit</a>
+      <a href="{% url 'delete_post' post.slug %}" class="btn btn-danger btn-sm">Delete</a>
+      <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Back</a>
+    </div>
+  </div>
+{% endblock %}
