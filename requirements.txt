@@ -18,6 +18,7 @@ djangorestframework_simplejwt==5.5.1
 djoser==2.3.3
 drf-yasg==1.21.10
 Flask==3.1.1
+gunicorn==23.0.0
 idna==3.10
 inflection==0.5.1
 itsdangerous==2.2.0
