@@ -3,21 +3,44 @@
 
 {% block title %}Home - My Blog{% endblock %}
 {% block content %}
-  <h2 class="mb-4">Recent Posts</h2>
-  <div class="row row-cols-1 row-cols-md-2 g-4">
+{% if not request.user.is_authenticated %}
+  <div class="alert alert-info">
+    <strong>Welcome to our Blog!</strong>
+    Please <a href="{% url 'login' %}">login</a> or 
+    <a href="{% url 'signup' %}">create an account</a> to start writing your own blog posts.
+    <br>
+    <small class="text-muted">
+      नमस्ते! ब्लॉग पोस्ट लिखने के लिए कृपया <a href="{% url 'login' %}">लॉगिन</a> करें या 
+      <a href="{% url 'signup' %}">नया खाता बनाएं</a>।
+    </small>
+  </div>
+{% endif %}
+<h2 class="mb-4">Recent Posts</h2>
+<div class="row row-cols-1 row-cols-md-2 g-4">
     {% for post in posts %}
     <div class="col">
-      <div class="card shadow-sm h-100">
-        <div class="card-body">
-          <h5 class="card-title"><a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h5>
-          <p class="card-text">{{ post.content|truncatewords:30 }}</p>
-          <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary btn-sm">Read More</a>
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
+                    {% if post.is_private %}
+                    <small class="text-danger">[Private]</small>
+                    {% endif %}
+                </h5>
+                <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+
+                <!-- ✅ Only show edit/delete buttons to the post's author -->
+                {% if request.user.is_authenticated and request.user == post.author %}
+                    <a href="{% url 'edit_post' post.slug %}">Edit</a>
+                    <a href="{% url 'delete_post' post.slug %}">Delete</a>
+                {% endif %}
+                <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary btn-sm">Read More</a>
+            </div>
+            <div class="card-footer text-muted">
+                By {{ post.author }} | {{ post.created_at|date:"M d, Y" }}
+            </div>
         </div>
-        <div class="card-footer text-muted">
-          By {{ post.author }} | {{ post.created_at|date:"M d, Y" }}
-        </div>
-      </div>
     </div>
     {% endfor %}
-  </div>
+</div>
 {% endblock %}

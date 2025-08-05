@@ -1,0 +1,33 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>Welcome {{ request.user.username }}</h2>
+
+<hr>
+<h3>Update Profile</h3>
+<form method="POST">
+  {% csrf_token %}
+  {{ user_form.as_p }}
+  <button type="submit">Update Info</button>
+</form>
+
+<hr>
+<h3>Change Password</h3>
+<form method="POST">
+  {% csrf_token %}
+  {{ password_form.as_p }}
+  <button type="submit">Change Password</button>
+</form>
+
+<hr>
+<h3>My Blog Posts</h3>
+{% for post in posts %}
+<h4>{{ post.title }}</h4>
+<p>{{ post.content|truncatewords:20 }}</p>
+<a href="{% url 'post_detail' post.slug %}">Read</a>
+{% empty %}
+<p>You haven’t posted anything yet.</p>
+{% endfor %}
+{% endblock %}

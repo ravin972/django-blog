@@ -5,9 +5,41 @@
     <div class="card-body">
       <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="mb-3">
+          <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+          {{ form.title }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Generated Slug</label>
+          <input type="text" class="form-control" id="generated-slug" readonly disabled>
+        </div>
+        <div class="mb-3">
+          <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+          {{ form.content }}
+        </div>
+        <div class="mb-3 form-check">
+          <label class="form-check-label" for="{{ form.is_private.id_for_label }}">
+            {{ form.is_private }} Private Post
+          </label>
+        </div>
         <button type="submit" class="btn btn-success">Publish</button>
       </form>
     </div>
   </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('{{ form.title.id_for_label }}').addEventListener('input', function(e) {
+    // Convert title to slug as user types
+    let title = e.target.value;
+    let slug = title.toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '-')     // Replace spaces with hyphens
+      .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
+      .trim();                  // Trim spaces from start and end
+    
+    document.getElementById('generated-slug').value = slug;
+  });
+</script>
 {% endblock %}
