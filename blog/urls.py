@@ -1,9 +1,10 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import HomeView
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('', HomeView.as_view(), name='home'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('dashboard/', views.dashboard, name='dashboard'),

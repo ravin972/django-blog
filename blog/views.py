@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from .forms import PostForm
@@ -9,6 +9,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from django.views.generic import ListView
 
 # blog/views.py
 def home(request):
@@ -29,6 +30,10 @@ def contact(request):
 
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)
+    
+    if post.is_private and post.author != request.user:
+        return HttpResponseForbidden("You are not allowed to view this private post.")
+    
     return render(request, 'blog/post_detail.html', {'post': post})
 
 @login_required
@@ -138,3 +143,23 @@ def dashboard(request):
         'user_form': user_form,
         'password_form': password_form,
     })
+
+class HomeView(ListView):
+    model = Post
+    template_name = 'blog/home.html'
+    context_object_name = 'posts'
+    ordering = ['-created_at']
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            # Show all public posts + user's private posts
+            return Post.objects.filter(
+                is_private=False
+            ) | Post.objects.filter(
+                is_private=True, author=user
+            )
+        else:
+            # Only public posts for anonymous users
+            return Post.objects.filter(is_private=False)
