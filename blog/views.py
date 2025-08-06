@@ -10,6 +10,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.views.generic import ListView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .serializers import PostSerializer
 
 # blog/views.py
 def home(request):
@@ -163,3 +166,9 @@ class HomeView(ListView):
         else:
             # Only public posts for anonymous users
             return Post.objects.filter(is_private=False)
+
+class PostListAPI(APIView):
+    def get(self, request):
+        posts = Post.objects.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)        

@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 from .views import HomeView
+from .views import PostListAPI
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -10,6 +11,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('explore/', views.explore, name='explore'),
     path('create/', views.create_post, name='create_post'),
+    path('api/posts/', PostListAPI.as_view(), name='api-posts'),
     path('post/<slug:slug>/edit/', views.edit_post, name='edit_post'),
     path('post/<slug:slug>/delete/', views.delete_post, name='delete_post'),
     path('post/<slug:slug>/', views.post_detail, name='post_detail'),
