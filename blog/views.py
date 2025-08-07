@@ -11,8 +11,10 @@ from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.views.generic import ListView
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import PostSerializer
+from rest_framework import status
 
 # blog/views.py
 def home(request):
@@ -172,3 +174,24 @@ class PostListAPI(APIView):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)        
+
+
+@api_view(['GET'])
+def get_post_by_id(request, pk):
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = PostSerializer(post)
+    return Response(serializer.data)
+
+class PostDetailBySlug(APIView):
+    def get(self, request, slug):
+        try:
+            post = Post.objects.get(slug=slug)
+        except Post.DoesNotExist:
+            return Response({'error': 'Post not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = PostSerializer(post)
+        return Response(serializer.data)

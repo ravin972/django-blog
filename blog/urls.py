@@ -3,6 +3,7 @@ from . import views
 from django.contrib.auth import views as auth_views
 from .views import HomeView
 from .views import PostListAPI
+from .views import get_post_by_id, PostDetailBySlug
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -18,4 +19,6 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('api/posts/id/<int:pk>/', get_post_by_id, name='get-post-by-id'),
+    path('api/posts/<slug:slug>/', PostDetailBySlug.as_view(), name='get-post-by-slug'),
 ]

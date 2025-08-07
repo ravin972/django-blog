@@ -13,6 +13,7 @@ class Post(models.Model):
     )
     created_at = models.DateTimeField(default=timezone.now)
     is_private = models.BooleanField(default=False)  # 👈 NEW FIELD
+    updated_at = models.DateTimeField(auto_now=True)  # Automatically updates when the post is edited
 
     def save(self, *args, **kwargs):
         if not self.slug:
