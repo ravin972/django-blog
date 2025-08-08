@@ -12,13 +12,10 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('explore/', views.explore, name='explore'),
     path('create/', views.create_post, name='create_post'),
-    path('api/posts/', PostListAPI.as_view(), name='api-posts'),
     path('post/<slug:slug>/edit/', views.edit_post, name='edit_post'),
     path('post/<slug:slug>/delete/', views.delete_post, name='delete_post'),
     path('post/<slug:slug>/', views.post_detail, name='post_detail'),
     path('signup/', views.signup_view, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='blog/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
-    path('api/posts/id/<int:pk>/', get_post_by_id, name='get-post-by-id'),
-    path('api/posts/<slug:slug>/', PostDetailBySlug.as_view(), name='get-post-by-slug'),
 ]
