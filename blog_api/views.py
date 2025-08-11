@@ -1,31 +1,32 @@
 # blog_api/views.py
-from rest_framework import generics, permissions
+from django.contrib.auth.models import User
+from rest_framework import generics, permissions, viewsets
 from blog.models import Post
-from .serializers import PostSerializer
+from .serializers import PostSerializer, RegisterSerializer
+from django.db import models  # Q objects ke liye
+from .permissions import IsOwnerOrReadOnly
 
-# List & Create — sirf logged-in user, list = only user's posts
-class PostListCreateView(generics.ListCreateAPIView):
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    CRUD for Blog Posts
+    - Public posts for everyone
+    - Private posts only for owner
+    """
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_queryset(self):
-        # user apne posts hi dekhega
-        return Post.objects.filter(author=self.request.user).order_by('-created_at')
+        user = self.request.user
+        if user.is_authenticated:
+            return Post.objects.filter(
+                models.Q(is_private=False) | models.Q(author=user)
+            ).order_by('-created_at')
+        return Post.objects.filter(is_private=False).order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
-# Retrieve / Update / Delete — owner only (we restrict via queryset)
-class PostRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        # only owner can retrieve/update/delete
-        return Post.objects.filter(author=self.request.user)
-
-class PublicPostListView(generics.ListAPIView):
-    queryset = Post.objects.filter(is_private=False).order_by('-created_at')
-    serializer_class = PostSerializer
-    permission_classes = [permissions.AllowAny]   # public
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = RegisterSerializer
