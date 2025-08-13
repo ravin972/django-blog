@@ -5,6 +5,7 @@ from blog.models import Post
 from .serializers import PostSerializer, RegisterSerializer
 from django.db import models  # Q objects ke liye
 from .permissions import IsOwnerOrReadOnly
+from django.db.models import Q
 
 class PostViewSet(viewsets.ModelViewSet):
     """
