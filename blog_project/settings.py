@@ -3,6 +3,7 @@ Django settings for blog_project project.
 """
 
 import os
+import dj_database_url
 from pathlib import Path
 from django.contrib.messages import constants as messages
 from decouple import config
@@ -76,10 +77,9 @@ WSGI_APPLICATION = 'blog_project.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL') or f'sqlite:///{BASE_DIR / "db.sqlite3"}'
+    )
 }
 
 # Password validation
