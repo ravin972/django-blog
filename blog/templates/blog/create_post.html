@@ -1,43 +1,66 @@
 {% extends 'blog/base.html' %}
+
 {% block content %}
-  <h2 class="mb-4">{{ title }}</h2>
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-          <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
-          {{ form.title }}
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Generated Slug</label>
-          <input type="text" class="form-control" id="generated-slug" readonly disabled>
-        </div>
-        <div class="mb-3">
-          <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
-          {{ form.content }}
-        </div>
-        <div class="mb-3 form-check">
-          <label class="form-check-label" for="{{ form.is_private.id_for_label }}">
-            {{ form.is_private }} Private Post
-          </label>
-        </div>
-        <button type="submit" class="btn btn-success">Publish</button>
-      </form>
-    </div>
-  </div>
+<div class="editor-container" style="max-width: 800px; margin: auto; padding: 2rem 1rem;">
+  
+  <!-- Page Title -->
+  <h1 style="font-weight: 600; font-size: 1.8rem; margin-bottom: 1.5rem;">
+    {{ title }}
+  </h1>
+
+  <form method="POST" style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% csrf_token %}
+
+    <!-- Title Input -->
+    <input 
+      type="text" 
+      name="{{ form.title.name }}" 
+      id="{{ form.title.id_for_label }}" 
+      placeholder="Title" 
+      value="{{ form.title.value|default:'' }}" 
+      style="border: none; outline: none; font-size: 2rem; font-weight: bold; width: 100%; background: transparent;"
+    >
+
+    <!-- Generated Slug -->
+    <input 
+      type="text" 
+      id="generated-slug" 
+      readonly 
+      placeholder="Slug will appear here" 
+      style="border: none; outline: none; font-size: 0.9rem; color: #888; background: transparent;"
+    >
+
+    <!-- Content Area -->
+    <textarea 
+      name="{{ form.content.name }}" 
+      id="{{ form.content.id_for_label }}" 
+      placeholder="Tell your story..." 
+      style="border: none; outline: none; resize: none; min-height: 300px; font-size: 1.1rem; line-height: 1.6; background: transparent;"
+    >{{ form.content.value|default:'' }}</textarea>
+
+    <!-- Private Toggle -->
+    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
+      {{ form.is_private }} Private Post
+    </label>
+
+    <!-- Publish Button -->
+    <button type="submit" 
+      style="align-self: flex-start; background-color: black; color: white; padding: 0.6rem 1.5rem; border: none; border-radius: 20px; font-weight: 500; cursor: pointer;">
+      Publish
+    </button>
+  </form>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
   document.getElementById('{{ form.title.id_for_label }}').addEventListener('input', function(e) {
-    // Convert title to slug as user types
     let title = e.target.value;
     let slug = title.toLowerCase()
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-')     // Replace spaces with hyphens
-      .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
-      .trim();                  // Trim spaces from start and end
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
     
     document.getElementById('generated-slug').value = slug;
   });

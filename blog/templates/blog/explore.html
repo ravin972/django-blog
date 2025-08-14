@@ -4,17 +4,33 @@
 {% block title %}Explore Blogs{% endblock %}
 
 {% block content %}
-<h2>Explore Public Blogs</h2>
-{% for post in posts %}
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">{{ post.title }}</h5>
-            <p class="card-text">{{ post.content|truncatewords:30 }}</p>
-            <p class="card-text"><small class="text-muted">By {{ post.author }}</small></p>
-            <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary">Read More</a>
+<div class="container py-4">
+    <h2 class="mb-4 text-center fw-bold text-light">Explore Public Blogs</h2>
+
+    {% for post in posts %}
+        <div class="card mb-4 border-0 shadow-sm" style="background-color: #1e293b; border-radius: 12px;">
+            <div class="card-body">
+                <h3 class="card-title fw-bold mb-2">
+                    <a href="{% url 'post_detail' post.slug %}" class="text-light text-decoration-none">
+                        {{ post.title }}
+                    </a>
+                </h3>
+                <p class="mb-2 text-secondary small">
+                    By {{ post.author.username }} · {{ post.created_at|date:"M d, Y" }}
+                </p>
+                <p class="card-text text-light">
+                    {{ post.content|truncatewords:30 }}
+                </p>
+                <a href="{% url 'post_detail' post.slug %}" class="btn btn-outline-light btn-sm">
+                    Read More →
+                </a>
+            </div>
         </div>
-    </div>
-{% empty %}
-    <p>No public posts found.</p>
-{% endfor %}
+    {% empty %}
+        <div class="text-center py-5">
+            <h5 class="text-muted">No public posts found.</h5>
+            <a href="{% url 'home' %}" class="btn btn-primary mt-3">Back to Home</a>
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}

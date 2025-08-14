@@ -4,6 +4,8 @@ from django.db.models import Q
 from .forms import PostForm
 from .models import Post
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -31,7 +33,27 @@ def about(request):
     return render(request, 'blog/about.html')
 
 def contact(request):
-    return render(request, 'blog/contact.html')
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+
+        full_message = f"From: {name} <{email}>\n\n{message}"
+
+        # Send email (adjust settings in settings.py)
+        send_mail(
+            subject,
+            full_message,
+            settings.DEFAULT_FROM_EMAIL,
+            [settings.CONTACT_EMAIL],
+            fail_silently=False
+        )
+
+        messages.success(request, "Your message has been sent successfully!")
+        return redirect("contact")
+
+    return render(request, "blog/contact.html")
 
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug)

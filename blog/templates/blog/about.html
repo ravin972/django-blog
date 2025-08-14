@@ -2,6 +2,23 @@
 {% load static %}
 
 {% block title %}About{% endblock %}
+
 {% block content %}
-<h1>This is About Page</h1>
+<h2 class="mb-4">About Us</h2>
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <p class="lead">
+      Welcome to <strong>Your Blog Name</strong> — a space where ideas, stories, and insights come together. 
+      We are passionate about sharing high-quality content that informs, inspires, and connects readers.
+    </p>
+    <p>
+      Founded in 2025, our mission is to create a community where knowledge flows freely and diverse voices can be heard. 
+      Whether it’s technology, lifestyle, business, or creativity, we aim to cover topics that matter to you.
+    </p>
+    <p>
+      If you'd like to collaborate, contribute, or just say hello, feel free to <a href="{% url 'contact' %}">contact us</a>. 
+      We’d love to hear from you!
+    </p>
+  </div>
+</div>
 {% endblock %}

@@ -3,46 +3,117 @@
 
 {% block title %}Home - My Blog{% endblock %}
 {% block content %}
+<style>
+    /* Medium.com Style Dark Theme */
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: 'Georgia', serif;
+    }
+
+    .post-preview {
+        border-bottom: 1px solid #2a2a2a;
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .post-preview:hover {
+        background-color: #181818;
+        border-radius: 10px;
+        padding: 2rem;
+    }
+
+    .post-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+        text-decoration: none;
+    }
+
+    .post-title:hover {
+        color: #00b894;
+    }
+
+    .post-meta {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-bottom: 1rem;
+    }
+
+    .post-excerpt {
+        color: #ccc;
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    .btn-read-more {
+        background-color: transparent;
+        border: 1px solid #00b894;
+        color: #00b894;
+        padding: 0.35rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+
+    .btn-read-more:hover {
+        background-color: #00b894;
+        color: #121212;
+    }
+
+    .alert-info {
+        background-color: #2d3436;
+        color: #dfe6e9;
+        border: none;
+        border-radius: 12px;
+    }
+
+    .pagination .page-link {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border: none;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #00b894;
+        color: #fff;
+    }
+</style>
+
 {% if not request.user.is_authenticated %}
-<div class="alert alert-info">
+<div class="alert alert-info shadow-sm rounded p-3">
     <strong>Welcome to our Blog!</strong>
-    Please <a href="{% url 'login' %}">login</a> or
-    <a href="{% url 'signup' %}">create an account</a> to start writing your own blog posts.
+    Please <a href="{% url 'login' %}" class="text-info">login</a> or
+    <a href="{% url 'signup' %}" class="text-info">create an account</a> to start writing your own blog posts.
     <br>
     <small class="text-muted">
-        नमस्ते! ब्लॉग पोस्ट लिखने के लिए कृपया <a href="{% url 'login' %}">लॉगिन</a> करें या
-        <a href="{% url 'signup' %}">नया खाता बनाएं</a>।
+        नमस्ते! ब्लॉग पोस्ट लिखने के लिए कृपया <a href="{% url 'login' %}" class="text-info">लॉगिन</a> करें या
+        <a href="{% url 'signup' %}" class="text-info">नया खाता बनाएं</a>।
     </small>
 </div>
 {% endif %}
-<h2 class="mb-4">Recent Posts</h2>
-<div class="row">
-    {% for post in posts %}
-    <div class="col-12 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
-                    {% if post.is_private %}
-                    <small class="text-danger">[Private]</small>
-                    {% endif %}
-                </h5>
-                <p class="card-text">{{ post.content|truncatewords:30 }}</p>
 
-                <!-- ✅ Only show edit/delete buttons to the post's author -->
-                {% if request.user.is_authenticated and request.user == post.author %}
-                <a href="{% url 'edit_post' post.slug %}">Edit</a>
-                <a href="{% url 'delete_post' post.slug %}">Delete</a>
-                {% endif %}
-                <a href="{% url 'post_detail' post.slug %}" class="btn btn-primary btn-sm">Read More</a>
-            </div>
-            <div class="card-footer text-muted">
-                By {{ post.author }} | {{ post.created_at|date:"M d, Y" }}
-            </div>
+<h2 class="mb-4 border-bottom pb-2">📝 Recent Posts</h2>
+<div class="container">
+    {% for post in posts %}
+    <div class="post-preview">
+        <a href="{% url 'post_detail' post.slug %}" class="post-title d-block">{{ post.title }}</a>
+        <div class="post-meta">
+            By <strong>{{ post.author }}</strong> • {{ post.created_at|date:"M d, Y" }}
+            {% if post.is_private %} <span class="text-danger">[Private]</span>{% endif %}
+        </div>
+        <p class="post-excerpt">{{ post.content|truncatewords:40 }}</p>
+        <div class="mt-2">
+            {% if request.user.is_authenticated and request.user == post.author %}
+            <a href="{% url 'edit_post' post.slug %}" class="btn btn-sm btn-outline-warning me-2">Edit</a>
+            <a href="{% url 'delete_post' post.slug %}" class="btn btn-sm btn-outline-danger me-2">Delete</a>
+            {% endif %}
+            <a href="{% url 'post_detail' post.slug %}" class="btn btn-read-more">Read More</a>
         </div>
     </div>
     {% endfor %}
-    <!-- ✅ Pagination Block -->
+
     {% if is_paginated %}
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">
@@ -54,13 +125,11 @@
                 <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
             </li>
             {% endif %}
-
             <li class="page-item disabled">
                 <a class="page-link">
                     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
                 </a>
             </li>
-
             {% if page_obj.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>

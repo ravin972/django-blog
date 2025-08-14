@@ -1,19 +1,82 @@
 {% extends 'blog/base.html' %}
 {% block title %}{{ post.title }} - My Blog{% endblock %}
 {% block content %}
-<div class="card shadow-sm">
-  <div class="card-body">
-    <h2 class="card-title">{{ post.title }}</h2>
-    <p class="card-text">{{ post.content|linebreaks }}</p>
-    <p class="text-muted">By {{ post.author }} | {{ post.created_at|date:"M d, Y" }}</p>
-  </div>
-  <div class="card-footer">
-    <!-- ✅ Buttons only if login user == author -->
-    {% if request.user.is_authenticated and request.user == post.author %}
-      <a href="{% url 'edit_post' post.slug %}">Edit</a>
-      <a href="{% url 'delete_post' post.slug %}">Delete</a>
-    {% endif %}
-    <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Back</a>
-  </div>
+
+<style>
+    .post-card {
+        background-color: #1e1e1e;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    .post-header {
+        background: linear-gradient(90deg, #4b6cb7, #182848);
+        color: white;
+        padding: 1.5rem;
+    }
+    .post-header h1 {
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    .post-content {
+        padding: 1.5rem;
+        line-height: 1.8;
+        color: #e0e0e0;
+    }
+    .post-footer {
+        background-color: #181818;
+        border-top: 1px solid #2a2a2a;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .btn-custom-yellow {
+        background-color: #f1c40f;
+        color: #121212;
+        border: none;
+    }
+    .btn-custom-yellow:hover {
+        background-color: #d4ac0d;
+        color: #fff;
+    }
+    .btn-custom-red {
+        background-color: #e74c3c;
+        border: none;
+        color: #fff;
+    }
+    .btn-custom-red:hover {
+        background-color: #c0392b;
+        color: #fff;
+    }
+</style>
+
+<div class="container my-4">
+    <div class="post-card">
+        
+        <!-- Header -->
+        <div class="post-header">
+            <h1>{{ post.title }}</h1>
+            <p class="mb-0">By {{ post.author }} • {{ post.created_at|date:"M d, Y" }}</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="post-content">
+            {{ post.content|linebreaks }}
+        </div>
+        
+        <!-- Footer -->
+        <div class="post-footer">
+            <div>
+                {% if request.user.is_authenticated and request.user == post.author %}
+                    <a href="{% url 'edit_post' post.slug %}" class="btn btn-sm btn-custom-yellow me-2">Edit</a>
+                    <a href="{% url 'delete_post' post.slug %}" class="btn btn-sm btn-custom-red">Delete</a>
+                {% endif %}
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">Back</a>
+        </div>
+
+    </div>
 </div>
+
 {% endblock %}
